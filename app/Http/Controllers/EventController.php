@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Event;
+use App\Event\EventCreated as newEventCreated;
 use Illuminate\Support\Carbon;
 use Datatables;
 
@@ -13,6 +15,9 @@ class EventController extends Controller
 {
     public function index()
     {
+
+
+
 
         return view('eventList');
     }
@@ -70,14 +75,16 @@ class EventController extends Controller
         if ($is_exist > 0) {
             return response()->json(['error' => 'event already exist']);
         }
-        $event = Event::create(array(
+        $eventdata = Event::create(array(
             'name' => $request->name,
             'slug' => $slug,
             'startAt' => $request->startAt,
             'endAt' => $request->endAt,
 
         ));
-        if ($event) {
+        event(new newEventCreated('new event has been created'));
+
+        if ($eventdata) {
             return ['success' => 1, 'msg' => 'Event has been created successfully.'];
         } else {
             return ['success' => 0, 'msg' => 'please try again'];

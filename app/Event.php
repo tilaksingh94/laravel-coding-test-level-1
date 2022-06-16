@@ -16,7 +16,7 @@ class Event extends Model
         'name',
         'slug',
         'startAt',
-        'endAt'
+        'endAt',
     ];
 
     
