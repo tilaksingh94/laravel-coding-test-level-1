@@ -15,10 +15,10 @@ use API\EventController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::prefix('v1/events')->group(function () {
-    Route::apiResource('/', EventController::class);
-    Route::get('active-events',  'API\EventController@getActiveList');
 
+Route::prefix('v1')->group(function () {
+    Route::apiResource('/events', EventController::class);
+    // Route::get('/events/active-events',  'API\EventController@');
 });
 
 
