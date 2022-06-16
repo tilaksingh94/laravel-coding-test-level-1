@@ -47,19 +47,19 @@ class EventController extends Controller
 
         ]);
 
-        $slug=Str::of($request->name)->slug('-');
-        $is_exist=Event::where('slug', '=', $slug)->count();
-        if ($is_exist>0) {
-            return response()->json(['error'=>'event already exist']);
+        $slug = Str::of($request->name)->slug('-');
+        $is_exist = Event::where('slug', '=', $slug)->count();
+        if ($is_exist > 0) {
+            return response()->json(['error' => 'event already exist']);
         }
-        $event=Event::create(array(
-            'name'=>$request->name,
-            'slug'=>$slug,
-            'startAt'=>$request->startAt,
-            'endAt'=>$request->endAt,
+        $event = Event::create(array(
+            'name' => $request->name,
+            'slug' => $slug,
+            'startAt' => $request->startAt,
+            'endAt' => $request->endAt,
 
         ));
-        return response()->json(['event'=>$event]);
+        return response()->json(['event' => $event]);
     }
 
     /**
@@ -70,7 +70,13 @@ class EventController extends Controller
      */
     public function show(Request $request, $id)
     {
-        $events=Event::find($id);
+        if ($id === 'active-events') {
+            return $this->getActiveList();
+        }
+
+        $events = Event::find($id);
+
+
         return response()->json(['event' => $events]);
     }
 
@@ -94,7 +100,7 @@ class EventController extends Controller
      */
     public function update(Request $request, $id)
     {
-       
+
         $validated = $request->validate([
             'name' => 'required',
             'startAt' => 'required|date',
@@ -102,19 +108,19 @@ class EventController extends Controller
 
         ]);
         $event = Event::findOrFail($id);
-        $slug=Str::of($request->name)->slug('-');
-        $is_exist=Event::where('slug', '=', $slug)->count();
-        if ($is_exist>0) {
-            return response()->json(['error'=>'event slug already exist']);
+        $slug = Str::of($request->name)->slug('-');
+        $is_exist = Event::where('slug', '=', $slug)->count();
+        if ($is_exist > 0) {
+            return response()->json(['error' => 'event slug already exist']);
         }
         $event->update(array(
-            'name'=>$request->name,
-            'slug'=>$slug,
-            'startAt'=>$request->startAt,
-            'endAt'=>$request->endAt,
+            'name' => $request->name,
+            'slug' => $slug,
+            'startAt' => $request->startAt,
+            'endAt' => $request->endAt,
 
         ));
-        return response()->json(['event'=>$event]);
+        return response()->json(['event' => $event]);
     }
 
     /**
@@ -123,22 +129,24 @@ class EventController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request,$id)
+    public function destroy(Request $request, $id)
     {
-       Event::findOrFail($id)->delete();
+        Event::findOrFail($id)->delete();
 
-      return response()->json(null, 204);
+        return response()->json(null, 204);
     }
 
-   
+
     public function getActiveList()
     {
         $current_date = Carbon::now()->format('Y-m-d');
         // $endAt = Carbon::now()->subDays(1)->format('Y-m-d');
-        $events=Event::where('endAt', '<=', $current_date)
-        ->when($current_date, function ($query, $current_date) {
-            return $query->orWhere('startAt','>=', $current_date);
-        })->get();
+        $events = Event::where('endAt', '>=', $current_date)
+            ->where('startAt', '<=', $current_date)
+            // ->when($current_date, function ($query, $current_date) {
+            //     return $query->orWhere('startAt', '>=', $current_date);
+            // })
+            ->get();
         return response()->json($events);
     }
 }
