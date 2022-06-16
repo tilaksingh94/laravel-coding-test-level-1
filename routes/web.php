@@ -22,8 +22,9 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/events', 'EventController@index')->name('events');
 Route::get('/events/ajax', 'EventController@eventsAjax')->name('eventsAjax');
-Route::get('/events/edit/{id}', 'EventController@edit')->name('e-edit');
-Route::get('/events/delete/{id}', 'EventController@delete')->name('e-delete');
-
-
-
+Route::get('/events/create', 'EventController@create')->name('createEvent');
+Route::get('/events/{id}', 'EventController@show')->name('showEvent');
+Route::post('/events/create/save', 'EventController@store')->name('saveEvent');
+Route::get('/events/{id}/edit', 'EventController@edit')->name('e-edit');
+Route::post('/events/update/{id}', 'EventController@update')->name('eventUpdate');
+Route::get('/events/delete/{id}', 'EventController@destroy')->name('e-delete');
